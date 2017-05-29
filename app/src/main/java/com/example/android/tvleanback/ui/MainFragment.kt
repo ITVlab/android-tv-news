@@ -48,10 +48,12 @@ import com.example.android.tvleanback.model.Card
 import com.example.android.tvleanback.presenter.CardPresenter
 import com.example.android.tvleanback.presenter.IconHeaderItemPresenter
 import com.example.android.tvleanback.recommendation.UpdateRecommendationsService
+import org.mcsoxford.rss.RSSReader
 
 import java.util.HashMap
 import java.util.Timer
 import java.util.TimerTask
+import java.util.function.Consumer
 
 /*
  * Main class to show BrowseFragment with header and rows of videos
@@ -148,6 +150,16 @@ class MainFragment : BrowseFragment() {
         val listRowAdapter = ArrayObjectAdapter(cardPresenter)
 
         // Pull RSS feed and parse
+        Thread(Runnable {
+            val rssReader = RSSReader()
+            val feed = "https://androidtv.news/feed/"
+            val rssFeed = rssReader.load(feed)
+            rssFeed.items.forEach(Consumer {
+                listRowAdapter.add(Card(type = Card.TYPE_ARTICLE, imageUrl = it.thumbnails[0].url.toString(),
+                        bgImageUrl = it.thumbnails[0].url.toString(), primaryText = it.title,
+                        secondaryText = it.pubDate.toString(), extra = it.content))
+            })
+        }).start()
 
         val header = HeaderItem(0, getString(R.string.header_articles))
         mCategoryRowAdapter!!.add(ListRow(header, listRowAdapter))
@@ -158,6 +170,7 @@ class MainFragment : BrowseFragment() {
         val listRowAdapter = ArrayObjectAdapter(cardPresenter)
 
         // Pull YT feed and parse
+
 
         val header = HeaderItem(1, getString(R.string.header_videos))
         mCategoryRowAdapter!!.add(ListRow(header, listRowAdapter))
