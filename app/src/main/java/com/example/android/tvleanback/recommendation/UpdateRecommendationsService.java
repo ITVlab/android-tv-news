@@ -76,49 +76,6 @@ public class UpdateRecommendationsService extends IntentService {
         int cardHeight = res.getDimensionPixelSize(R.dimen.card_height);
         ContentRecommendation.Builder builder = new ContentRecommendation.Builder()
                 .setBadgeIcon(R.drawable.videos_by_google_icon);
-
-        Cursor cursor = getContentResolver().query(
-                VideoContract.VideoEntry.CONTENT_URI,
-                null, // projection
-                null, // selection
-                null, // selection clause
-                "RANDOM() LIMIT " + MAX_RECOMMENDATIONS // sort order
-        );
-
-        if (cursor != null && cursor.moveToNext()) {
-            try {
-                do {
-                    Video video = (Video) mVideoCursorMapper.convert(cursor);
-                    int id = Long.valueOf(video.id).hashCode();
-
-                    builder.setIdTag("Video" + id)
-                            .setTitle(video.title)
-                            .setText(getString(R.string.app_name))
-                            .setContentIntentData(ContentRecommendation.INTENT_TYPE_ACTIVITY,
-                                    buildPendingIntent(video, id), 0, null);
-
-                    Bitmap bitmap = Glide.with(getApplication())
-                            .load(video.cardImageUrl)
-                            .asBitmap()
-                            .into(cardWidth, cardHeight) // Only use for synchronous .get()
-                            .get();
-                    builder.setContentImage(bitmap);
-
-                    // Create an object holding all the information used to recommend the content.
-                    ContentRecommendation rec = builder.build();
-                    Notification notification = rec.getNotificationObject(getApplicationContext());
-
-                    if (BuildConfig.DEBUG) Log.d(TAG, "Recommending video " + video.title);
-
-                    // Recommend the content by publishing the notification.
-                    mNotifManager.notify(id, notification);
-                } while (cursor.moveToNext());
-            } catch (InterruptedException | ExecutionException e) {
-                Log.e(TAG, "Could not create recommendation.", e);
-            } finally {
-                cursor.close();
-            }
-        }
     }
 
     private Intent buildPendingIntent(Video video, int id) {

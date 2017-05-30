@@ -38,6 +38,8 @@ import android.support.v17.leanback.widget.PresenterSelector
 import android.support.v17.leanback.widget.Row
 import android.support.v17.leanback.widget.RowPresenter
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
+import android.support.v7.view.ContextThemeWrapper
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
@@ -310,7 +312,7 @@ class MainFragment : BrowseFragment() {
                 byteArrayOutputStream.write(i)
                 i = `is`!!.read()
             }
-            Log.d(BrowseFragment.TAG, "Download finished; parse")
+            Log.d(TAG, "Download finished; parse")
             return byteArrayOutputStream.toString("UTF-8")
         } finally {
             if (`is` != null) {
@@ -333,11 +335,32 @@ class MainFragment : BrowseFragment() {
     private inner class ItemViewClickedListener : OnItemViewClickedListener {
         override fun onItemClicked(itemViewHolder: Presenter.ViewHolder, item: Any,
                                    rowViewHolder: RowPresenter.ViewHolder, row: Row) {
-
             val card = item as Card
             when (card.type) {
                 Card.TYPE_ARTICLE -> {
                     // Open the browser
+                    val articleIntent = Intent(activity, ArticleViewActivity::class.java)
+                    articleIntent.putExtra(ArticleViewActivity.EXTRA_CONTENT, card.extra)
+                    startActivity(articleIntent)
+                }
+                Card.TYPE_VIDEO -> {
+                    // Open YT
+                    startActivity(Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://youtube.com/watch?v=${card.extra}")))
+                }
+                Card.TYPE_PODCAST -> {
+                    // Open podcast
+                }
+                Card.TYPE_APP -> {
+                    // Open Google Play
+                    startActivity(Intent(Intent.ACTION_VIEW,
+                            Uri.parse("market://details?id=${card.extra}")))
+                }
+                Card.TYPE_APP_ABOUT -> {
+                    AlertDialog.Builder(ContextThemeWrapper(activity, R.style.Base_Theme_AppCompat_Dialog))
+                            .setTitle("ITV Lab")
+                            .setMessage("A description")
+                            .show()
                 }
             }
             // TODO Add clicker
@@ -358,6 +381,7 @@ class MainFragment : BrowseFragment() {
 
     companion object {
         private val BACKGROUND_UPDATE_DELAY = 300
+        val TAG = MainFragment::class.java.simpleName
     }
 }
 

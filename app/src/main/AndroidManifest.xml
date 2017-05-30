@@ -121,6 +121,9 @@
         <activity
             android:name=".ui.AuthenticationActivity"
             android:theme="@style/Theme.Example.Leanback.GuidedStep" />
+        <activity
+            android:name=".ui.ArticleViewActivity"
+            android:theme="@style/Theme.AppCompat"
+             />
     </application>
-
 </manifest>
