@@ -164,6 +164,7 @@ class MainFragment : BrowseFragment() {
         Thread(Runnable {
             val rssReader = RSSReader()
             val feed = "https://androidtv.news/feed/"
+            // Get more posts: https://androidtv.news/feed/?paged=2
             val rssFeed = rssReader.load(feed)
             rssFeed.items.forEach(Consumer {
                 addCard(listRowAdapter, Card(type = Card.TYPE_ARTICLE,
