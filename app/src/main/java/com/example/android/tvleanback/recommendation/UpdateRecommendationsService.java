@@ -79,9 +79,7 @@ public class UpdateRecommendationsService extends IntentService {
     }
 
     private Intent buildPendingIntent(Video video, int id) {
-        Intent detailsIntent = new Intent(this, VideoDetailsActivity.class);
-        detailsIntent.putExtra(VideoDetailsActivity.VIDEO, video);
-        detailsIntent.putExtra(VideoDetailsActivity.NOTIFICATION_ID, id);
+        Intent detailsIntent = new Intent();
         detailsIntent.setAction(Long.toString(video.id));
 
         return detailsIntent;

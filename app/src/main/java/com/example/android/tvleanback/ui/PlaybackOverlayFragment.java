@@ -87,7 +87,7 @@ import java.util.List;
  */
 public class PlaybackOverlayFragment
         extends android.support.v17.leanback.app.PlaybackOverlayFragment
-        implements LoaderManager.LoaderCallbacks<Cursor>, TextureView.SurfaceTextureListener,
+        implements TextureView.SurfaceTextureListener,
         VideoPlayer.Listener {
     private static final String TAG = "PlaybackOverlayFragment";
     private static final int BACKGROUND_TYPE = PlaybackOverlayFragment.BG_LIGHT;
@@ -108,7 +108,6 @@ public class PlaybackOverlayFragment
     private List<MediaSessionCompat.QueueItem> mQueue = new ArrayList<>();
     private CursorObjectAdapter mVideoCursorAdapter;
     private MediaSessionCompat mSession; // MediaSession is used to hold the state of our media playback.
-    private LoaderManager.LoaderCallbacks<Cursor> mCallbacks;
     private MediaController mMediaController;
     private PlaybackControlHelper mGlue;
     private MediaController.Callback mMediaControllerCallback;
@@ -150,8 +149,6 @@ public class PlaybackOverlayFragment
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mCallbacks = this;
-
         createMediaSession();
     }
 
@@ -271,81 +268,6 @@ public class PlaybackOverlayFragment
         } else {
             mGlue.setFadingEnabled(true);
         }
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        switch (id) {
-            case RECOMMENDED_VIDEOS_LOADER: // Fall through.
-            case QUEUE_VIDEOS_LOADER: {
-                String category = args.getString(VideoContract.VideoEntry.COLUMN_CATEGORY);
-                return new CursorLoader(
-                        getActivity(),
-                        VideoContract.VideoEntry.CONTENT_URI,
-                        null, // Projection to return - null means return all fields.
-                        VideoContract.VideoEntry.COLUMN_CATEGORY + " = ?",
-                        // Selection clause is category.
-                        new String[]{category}, // Select based on the category.
-                        null // Default sort order
-                );
-            }
-            default: {
-                // Loading a specific video.
-                String videoId = args.getString(VideoContract.VideoEntry._ID);
-                return new CursorLoader(
-                        getActivity(),
-                        VideoContract.VideoEntry.CONTENT_URI,
-                        null, // Projection to return - null means return all fields.
-                        VideoContract.VideoEntry._ID + " = ?", // Selection clause is id.
-                        new String[]{videoId}, // Select based on the id.
-                        null // Default sort order
-                );
-            }
-        }
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (cursor != null && cursor.moveToFirst()) {
-            switch (loader.getId()) {
-                case QUEUE_VIDEOS_LOADER: {
-                    mQueue.clear();
-                    while (!cursor.isAfterLast()) {
-                        Video v = (Video) mVideoCursorMapper.convert(cursor);
-
-                        // Set the queue index to the selected video.
-                        if (v.id == mSelectedVideo.id) {
-                            mQueueIndex = mQueue.size();
-                        }
-
-                        // Add the video to the queue.
-                        MediaSessionCompat.QueueItem item = getQueueItem(v);
-                        mQueue.add(item);
-
-                        cursor.moveToNext();
-                    }
-
-                    mSession.setQueue(mQueue);
-                    mSession.setQueueTitle(getString(R.string.queue_name));
-                    break;
-                }
-                case RECOMMENDED_VIDEOS_LOADER: {
-                    mVideoCursorAdapter.changeCursor(cursor);
-                    break;
-                }
-                default: {
-                    // Playing a specific video.
-                    Video video = (Video) mVideoCursorMapper.convert(cursor);
-                    playVideo(video, mAutoPlayExtras);
-                    break;
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mVideoCursorAdapter.changeCursor(null);
     }
 
     private void setPosition(long position) {
@@ -484,8 +406,6 @@ public class PlaybackOverlayFragment
         mVideoCursorAdapter.setMapper(new VideoCursorMapper());
 
         Bundle args = new Bundle();
-        args.putString(VideoContract.VideoEntry.COLUMN_CATEGORY, mSelectedVideo.category);
-        getLoaderManager().initLoader(RECOMMENDED_VIDEOS_LOADER, args, this);
 
         HeaderItem header = new HeaderItem(getString(R.string.related_movies));
         mRowsAdapter.add(new ListRow(header, mVideoCursorAdapter));
@@ -669,8 +589,6 @@ public class PlaybackOverlayFragment
 
         // Start loading videos for the queue
         Bundle args = new Bundle();
-        args.putString(VideoContract.VideoEntry.COLUMN_CATEGORY, mSelectedVideo.category);
-        getLoaderManager().initLoader(QUEUE_VIDEOS_LOADER, args, mCallbacks);
     }
 
     private final class ItemViewClickedListener implements OnItemViewClickedListener {
@@ -705,8 +623,6 @@ public class PlaybackOverlayFragment
         // This method should play any media item regardless of the Queue.
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
             Bundle args = new Bundle();
-            args.putString(VideoContract.VideoEntry._ID, mediaId);
-            getLoaderManager().initLoader(mSpecificVideoLoaderId++, args, mCallbacks);
         }
 
         @Override
