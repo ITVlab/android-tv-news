@@ -70,7 +70,6 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.android.tvleanback.R;
 import com.example.android.tvleanback.Utils;
-import com.example.android.tvleanback.data.VideoContract;
 import com.example.android.tvleanback.model.Video;
 import com.example.android.tvleanback.model.VideoCursorMapper;
 import com.example.android.tvleanback.player.ExtractorRendererBuilder;

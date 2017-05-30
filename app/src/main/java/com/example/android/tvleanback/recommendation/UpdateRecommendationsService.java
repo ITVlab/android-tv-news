@@ -32,7 +32,6 @@ import android.util.Log;
 import com.bumptech.glide.Glide;
 import com.example.android.tvleanback.BuildConfig;
 import com.example.android.tvleanback.R;
-import com.example.android.tvleanback.data.VideoContract;
 import com.example.android.tvleanback.model.Video;
 import com.example.android.tvleanback.model.VideoCursorMapper;
 import com.example.android.tvleanback.ui.VideoDetailsActivity;

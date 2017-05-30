@@ -35,7 +35,6 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 
 import com.example.android.tvleanback.R;
-import com.example.android.tvleanback.data.VideoContract;
 import com.example.android.tvleanback.model.Video;
 import com.example.android.tvleanback.model.VideoCursorMapper;
 import com.example.android.tvleanback.presenter.CardPresenter;
