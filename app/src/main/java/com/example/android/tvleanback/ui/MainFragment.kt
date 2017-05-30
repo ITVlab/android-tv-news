@@ -185,7 +185,7 @@ class MainFragment : BrowseFragment() {
 
         // Pull YT feed and parse
         // Ex: https://developers.google.com/apis-explorer/#p/youtube/v3/youtube.playlistItems.list?part=snippet&playlistId=UU1R_fgIcP7DJoPgR0nAUQ1w&_h=4&
-        Thread(Runnable({
+        Thread({
             val yt_api_key = getString(R.string.yt_api_key)
             val yt_playlist = getString(R.string.yt_uploads_pl)
             val url = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=$yt_playlist&key=$yt_api_key"
@@ -199,7 +199,7 @@ class MainFragment : BrowseFragment() {
                         secondaryText = "New Video",
                         extra = video.getJSONObject("snippet").getJSONObject("resourceId").getString("videoId")))
             }
-        })).start()
+        }).start()
 
         val header = HeaderItem(1, getString(R.string.header_videos))
         mCategoryRowAdapter!!.add(ListRow(header, listRowAdapter))
@@ -213,7 +213,7 @@ class MainFragment : BrowseFragment() {
         listRowAdapter.add(Card(type = Card.TYPE_PODCAST,
                 primaryText = "Pre Google I/O", secondaryText = "Ep. 1 - 17 May",
                 imageUrl = "https://i1.sndcdn.com/artworks-000222955659-qjewpu-t500x500.jpg",
-                extra = "https://soundcloud.com/androidtv-news/android-tv-news-podcast-1-pre-google-io"
+                extra = "<iframe width='100%' height='600' scrolling='no' frameborder='no' src='https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/323040676&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true'></iframe>"
         ))
 
         val header = HeaderItem(1, getString(R.string.header_podcasts))
@@ -291,32 +291,30 @@ class MainFragment : BrowseFragment() {
         var `is`: InputStream? = null
         // Only display the first 1000 characters of the retrieved
         // web page content.
-        val len = 1000
         try {
             val url = URL(myurl)
             val conn = url.openConnection() as HttpURLConnection
-            conn.setReadTimeout(10000 /* milliseconds */)
+            conn.readTimeout = 10000
             //set back to 15000, 10000
-            conn.setConnectTimeout(15000 /* milliseconds */)
-            conn.setRequestMethod("GET")
-            conn.setDoInput(true)
+            conn.connectTimeout = 15000
+            conn.requestMethod = "GET"
+            conn.doInput = true
             // Starts the query
             conn.connect()
-            val response = conn.getResponseCode()
-            `is` = conn.getInputStream()
+            `is` = conn.inputStream
 
             val byteArrayOutputStream = ByteArrayOutputStream()
 
             var i = `is`!!.read()
             while (i != -1) {
                 byteArrayOutputStream.write(i)
-                i = `is`!!.read()
+                i = `is`.read()
             }
             Log.d(TAG, "Download finished; parse")
             return byteArrayOutputStream.toString("UTF-8")
         } finally {
             if (`is` != null) {
-                `is`!!.close()
+                `is`.close()
             }
         }
     }
@@ -350,6 +348,9 @@ class MainFragment : BrowseFragment() {
                 }
                 Card.TYPE_PODCAST -> {
                     // Open podcast
+                    val articleIntent = Intent(activity, PodcastWebPlayerActivity::class.java)
+                    articleIntent.putExtra(PodcastWebPlayerActivity.EXTRA_CONTENT, card.extra)
+                    startActivity(articleIntent)
                 }
                 Card.TYPE_APP -> {
                     // Open Google Play
@@ -359,7 +360,7 @@ class MainFragment : BrowseFragment() {
                 Card.TYPE_APP_ABOUT -> {
                     AlertDialog.Builder(ContextThemeWrapper(activity, R.style.Base_Theme_AppCompat_Dialog))
                             .setTitle("ITV Lab")
-                            .setMessage("A description")
+                            .setMessage("Here are some Android Tv apps")
                             .show()
                 }
             }

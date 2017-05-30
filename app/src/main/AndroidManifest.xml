@@ -125,5 +125,9 @@
             android:name=".ui.ArticleViewActivity"
             android:theme="@style/Theme.AppCompat"
              />
+        <activity
+            android:name=".ui.PodcastWebPlayerActivity"
+            android:theme="@style/Theme.AppCompat"
+             />
     </application>
 </manifest>
