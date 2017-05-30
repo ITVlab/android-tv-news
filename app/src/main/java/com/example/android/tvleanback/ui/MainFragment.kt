@@ -210,11 +210,21 @@ class MainFragment : BrowseFragment() {
         val listRowAdapter = ArrayObjectAdapter(cardPresenter)
 
         // Pull upload feed and parse
-        listRowAdapter.add(Card(type = Card.TYPE_PODCAST,
-                primaryText = "Pre Google I/O", secondaryText = "Ep. 1 - 17 May",
-                imageUrl = "https://i1.sndcdn.com/artworks-000222955659-qjewpu-t500x500.jpg",
-                extra = "<iframe width='100%' height='600' scrolling='no' frameborder='no' src='https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/323040676&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true'></iframe>"
-        ))
+        val SOUNDCLOUD_API_KEY = "2t9loNQH90kzJcsFCODdigxfp325aq4z"
+        val SOUNDCLOUD_USER_ID = "307779002"
+        Thread({
+            val url = "http://api.soundcloud.com/users/$SOUNDCLOUD_USER_ID/tracks?client_id=$SOUNDCLOUD_API_KEY"
+            val response = downloadUrl(url)
+            val items = JSONArray(response)
+            for (podcast in items) {
+                addCard(listRowAdapter, Card(type = Card.TYPE_PODCAST,
+                        primaryText = podcast.getString("title"),
+                        secondaryText = podcast.getString("created_at"),
+                        imageUrl = podcast.getString("artwork_url"),
+                        bgImageUrl = podcast.getString("waveform_url"),
+                        extra = "${podcast.getString("stream_url")}?client_id=$SOUNDCLOUD_API_KEY"))
+            }
+        }).start()
 
         val header = HeaderItem(1, getString(R.string.header_podcasts))
         mCategoryRowAdapter!!.add(ListRow(header, listRowAdapter))
@@ -244,6 +254,7 @@ class MainFragment : BrowseFragment() {
     }
 
     private fun addCard(adapter: ArrayObjectAdapter, card: Card) {
+        // Run on main thread
         Handler(Looper.getMainLooper()).post({ adapter.add(card) })
     }
 
@@ -348,9 +359,11 @@ class MainFragment : BrowseFragment() {
                 }
                 Card.TYPE_PODCAST -> {
                     // Open podcast
-                    val articleIntent = Intent(activity, PodcastWebPlayerActivity::class.java)
-                    articleIntent.putExtra(PodcastWebPlayerActivity.EXTRA_CONTENT, card.extra)
-                    startActivity(articleIntent)
+                    val podcastIntent = Intent(activity, PlaybackOverlayActivity::class.java)
+                    podcastIntent.putExtra(PlaybackOverlayActivity.EXTRA_MEDIA_URL, card.extra)
+                    podcastIntent.putExtra(PlaybackOverlayActivity.EXTRA_MEDIA_TITLE, card.primaryText)
+                    podcastIntent.putExtra(PlaybackOverlayActivity.EXTRA_MEDIA_IMG, card.imageUrl)
+                    startActivity(podcastIntent)
                 }
                 Card.TYPE_APP -> {
                     // Open Google Play

@@ -52,15 +52,15 @@ public class VideoTest {
         for (Video testVideo : testVideoList) {
             Parcel testVideoParcel = Parcel.obtain();
             testVideo.writeToParcel(testVideoParcel, 0);
-            Video testVideoClone = Video.CREATOR.createFromParcel(testVideoParcel);
+            Video testVideoClone = Video.Companion.getCREATOR().createFromParcel(testVideoParcel);
 
-            assert testVideo.id == testVideoClone.id;
-            assert testVideo.title.equals(testVideoClone.title);
-            assert testVideo.description.equals(testVideoClone.description);
-            assert testVideo.category.equals(testVideoClone.category);
-            assert testVideo.studio.equals(testVideoClone.studio);
-            assert testVideo.bgImageUrl.equals(testVideoClone.bgImageUrl);
-            assert testVideo.cardImageUrl.equals(testVideoClone.cardImageUrl);
+            assert testVideo.getId() == testVideoClone.getId();
+            assert testVideo.getTitle().equals(testVideoClone.getTitle());
+            assert testVideo.getDescription().equals(testVideoClone.getDescription());
+            assert testVideo.getCategory().equals(testVideoClone.getCategory());
+            assert testVideo.getStudio().equals(testVideoClone.getStudio());
+            assert testVideo.getBgImageUrl().equals(testVideoClone.getBgImageUrl());
+            assert testVideo.getCardImageUrl().equals(testVideoClone.getCardImageUrl());
             assert testVideo.toString().equals(testVideoClone.toString());
         }
 

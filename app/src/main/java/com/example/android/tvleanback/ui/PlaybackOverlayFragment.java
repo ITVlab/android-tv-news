@@ -86,8 +86,6 @@ public class PlaybackOverlayFragment
     private static final int BACKGROUND_TYPE = PlaybackOverlayFragment.BG_LIGHT;
     private static final String AUTO_PLAY = "auto_play";
     private static final Bundle mAutoPlayExtras = new Bundle();
-    private static final int RECOMMENDED_VIDEOS_LOADER = 1;
-    private static final int QUEUE_VIDEOS_LOADER = 2;
 
     static {
         mAutoPlayExtras.putBoolean(AUTO_PLAY, true);
@@ -212,7 +210,13 @@ public class PlaybackOverlayFragment
     private boolean updateSelectedVideo(Video video) {
         Intent intent = new Intent(getActivity().getIntent());
 
-        mSelectedVideo = video;
+        // Reconstruct the video from intent data.
+        Video.Builder builder = new Video.Builder();
+        builder.setVideoUrl(intent.getStringExtra(PlaybackOverlayActivity.Companion.getEXTRA_MEDIA_URL()));
+        builder.setTitle(intent.getStringExtra(PlaybackOverlayActivity.Companion.getEXTRA_MEDIA_TITLE()));
+        builder.setBgImageUrl(intent.getStringExtra(PlaybackOverlayActivity.Companion.getEXTRA_MEDIA_IMG()));
+        builder.setCardImageUrl(intent.getStringExtra(PlaybackOverlayActivity.Companion.getEXTRA_MEDIA_IMG()));
+        mSelectedVideo = builder.build();
 
         PendingIntent pi = PendingIntent.getActivity(
                 getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -228,7 +232,7 @@ public class PlaybackOverlayFragment
         if (mGlue.isMediaPlaying()) {
             boolean isVisibleBehind = getActivity().requestVisibleBehind(true);
             boolean isInPictureInPictureMode =
-                   PlaybackOverlayActivity.supportsPictureInPicture(getActivity())
+                   PlaybackOverlayActivity.Companion.supportsPictureInPicture(getActivity())
                             && getActivity().isInPictureInPictureMode();
             if (!isVisibleBehind && !isInPictureInPictureMode) {
                 pause();
@@ -279,14 +283,14 @@ public class PlaybackOverlayFragment
 
     private MediaSessionCompat.QueueItem getQueueItem(Video v) {
         MediaDescriptionCompat desc = new MediaDescriptionCompat.Builder()
-                .setDescription(v.description)
-                .setMediaId(v.id + "")
-                .setIconUri(Uri.parse(v.cardImageUrl))
-                .setMediaUri(Uri.parse(v.videoUrl))
-                .setSubtitle(v.studio)
-                .setTitle(v.title)
+                .setDescription(v.getDescription())
+                .setMediaId(v.getId() + "")
+                .setIconUri(Uri.parse(v.getCardImageUrl()))
+                .setMediaUri(Uri.parse(v.getVideoUrl()))
+                .setSubtitle(v.getStudio())
+                .setTitle(v.getTitle())
                 .build();
-        return new MediaSessionCompat.QueueItem(desc, v.id);
+        return new MediaSessionCompat.QueueItem(desc, v.getId());
     }
 
     public long getBufferedPosition() {
@@ -391,7 +395,7 @@ public class PlaybackOverlayFragment
 
     private VideoPlayer.RendererBuilder getRendererBuilder() {
         String userAgent = Util.getUserAgent(getActivity(), "ExoVideoPlayer");
-        Uri contentUri = Uri.parse(mSelectedVideo.videoUrl);
+        Uri contentUri = Uri.parse(mSelectedVideo.getVideoUrl());
         int contentType = Util.inferContentType(contentUri.getLastPathSegment());
 
         switch (contentType) {
@@ -520,25 +524,25 @@ public class PlaybackOverlayFragment
     private void updateMetadata(final Video video) {
         final MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder();
 
-        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, video.id + "");
-        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, video.title);
-        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, video.studio);
+        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, video.getId() + "");
+        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, video.getTitle());
+        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, video.getStudio());
         metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION,
-                video.description);
+                video.getDescription());
 
-        long duration = Utils.getDuration(video.videoUrl);
+        long duration = Utils.getDuration(video.getVideoUrl());
         metadataBuilder.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration);
 
         // And at minimum the title and artist for legacy support
-        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, video.title);
-        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, video.studio);
+        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, video.getTitle());
+        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, video.getStudio());
 
         Resources res = getResources();
         int cardWidth = res.getDimensionPixelSize(R.dimen.playback_overlay_width);
         int cardHeight = res.getDimensionPixelSize(R.dimen.playback_overlay_height);
 
         Glide.with(this)
-                .load(Uri.parse(video.cardImageUrl))
+                .load(Uri.parse(video.getCardImageUrl()))
                 .asBitmap()
                 .centerCrop()
                 .into(new SimpleTarget<Bitmap>(cardWidth, cardHeight) {

@@ -81,7 +81,7 @@ class PlaybackControlHelper extends PlaybackControlGlue {
         adapter.add(mThumbsDownAction);
         adapter.add(mRepeatAction);
         adapter.add(mThumbsUpAction);
-        if (PlaybackOverlayActivity.supportsPictureInPicture(getContext())) {
+        if (PlaybackOverlayActivity.Companion.supportsPictureInPicture(getContext())) {
             adapter.add(mPipAction);
         }
 
@@ -160,12 +160,12 @@ class PlaybackControlHelper extends PlaybackControlGlue {
 
     @Override
     public CharSequence getMediaTitle() {
-        return mVideo.title;
+        return mVideo.getTitle();
     }
 
     @Override
     public CharSequence getMediaSubtitle() {
-        return mVideo.description;
+        return mVideo.getDescription();
     }
 
     @Override

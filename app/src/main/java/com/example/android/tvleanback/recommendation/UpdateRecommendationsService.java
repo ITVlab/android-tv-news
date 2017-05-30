@@ -70,7 +70,7 @@ public class UpdateRecommendationsService extends IntentService {
 
     private Intent buildPendingIntent(Video video, int id) {
         Intent detailsIntent = new Intent();
-        detailsIntent.setAction(Long.toString(video.id));
+        detailsIntent.setAction(Long.toString(video.getId()));
 
         return detailsIntent;
     }
