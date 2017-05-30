@@ -23,6 +23,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.support.v17.leanback.app.BackgroundManager
 import android.support.v17.leanback.app.BrowseFragment
 import android.support.v17.leanback.widget.ArrayObjectAdapter
@@ -38,6 +39,7 @@ import android.support.v17.leanback.widget.Row
 import android.support.v17.leanback.widget.RowPresenter
 import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 
 import com.bumptech.glide.Glide
@@ -48,7 +50,14 @@ import com.example.android.tvleanback.model.Card
 import com.example.android.tvleanback.presenter.CardPresenter
 import com.example.android.tvleanback.presenter.IconHeaderItemPresenter
 import com.example.android.tvleanback.recommendation.UpdateRecommendationsService
+import org.json.JSONArray
+import org.json.JSONObject
 import org.mcsoxford.rss.RSSReader
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 
 import java.util.HashMap
 import java.util.Timer
@@ -155,9 +164,12 @@ class MainFragment : BrowseFragment() {
             val feed = "https://androidtv.news/feed/"
             val rssFeed = rssReader.load(feed)
             rssFeed.items.forEach(Consumer {
-                listRowAdapter.add(Card(type = Card.TYPE_ARTICLE, imageUrl = it.thumbnails[0].url.toString(),
-                        bgImageUrl = it.thumbnails[0].url.toString(), primaryText = it.title,
-                        secondaryText = it.pubDate.toString(), extra = it.content))
+                addCard(listRowAdapter, Card(type = Card.TYPE_ARTICLE,
+                        imageUrl = it.thumbnails[0].url.toString(),
+                        bgImageUrl = it.thumbnails[0].url.toString(),
+                        primaryText = it.title,
+                        secondaryText = it.pubDate.toString(),
+                        extra = it.content))
             })
         }).start()
 
@@ -170,7 +182,22 @@ class MainFragment : BrowseFragment() {
         val listRowAdapter = ArrayObjectAdapter(cardPresenter)
 
         // Pull YT feed and parse
-
+        // Ex: https://developers.google.com/apis-explorer/#p/youtube/v3/youtube.playlistItems.list?part=snippet&playlistId=UU1R_fgIcP7DJoPgR0nAUQ1w&_h=4&
+        Thread(Runnable({
+            val yt_api_key = getString(R.string.yt_api_key)
+            val yt_playlist = getString(R.string.yt_uploads_pl)
+            val url = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=$yt_playlist&key=$yt_api_key"
+            val response = downloadUrl(url)
+            val items = JSONObject(response).getJSONArray("items")
+            for (video in items) {
+                addCard(listRowAdapter, Card(type = Card.TYPE_VIDEO,
+                        primaryText = video.getJSONObject("snippet").getString("title"),
+                        bgImageUrl = video.getJSONObject("snippet").getJSONObject("thumbnails").getJSONObject("maxres").getString("url"),
+                        imageUrl = video.getJSONObject("snippet").getJSONObject("thumbnails").getJSONObject("maxres").getString("url"),
+                        secondaryText = "New Video",
+                        extra = video.getJSONObject("snippet").getJSONObject("resourceId").getString("videoId")))
+            }
+        })).start()
 
         val header = HeaderItem(1, getString(R.string.header_videos))
         mCategoryRowAdapter!!.add(ListRow(header, listRowAdapter))
@@ -180,7 +207,12 @@ class MainFragment : BrowseFragment() {
         val cardPresenter = CardPresenter()
         val listRowAdapter = ArrayObjectAdapter(cardPresenter)
 
-        // Pull RSS feed and parse
+        // Pull upload feed and parse
+        listRowAdapter.add(Card(type = Card.TYPE_PODCAST,
+                primaryText = "Pre Google I/O", secondaryText = "Ep. 1 - 17 May",
+                imageUrl = "https://i1.sndcdn.com/artworks-000222955659-qjewpu-t500x500.jpg",
+                extra = "https://soundcloud.com/androidtv-news/android-tv-news-podcast-1-pre-google-io"
+        ))
 
         val header = HeaderItem(1, getString(R.string.header_podcasts))
         mCategoryRowAdapter!!.add(ListRow(header, listRowAdapter))
@@ -207,6 +239,10 @@ class MainFragment : BrowseFragment() {
 
         val header = HeaderItem(1, getString(R.string.header_itvlab))
         mCategoryRowAdapter!!.add(ListRow(header, listRowAdapter))
+    }
+
+    private fun addCard(adapter: ArrayObjectAdapter, card: Card) {
+        Handler(Looper.getMainLooper()).post({ adapter.add(card) })
     }
 
     private fun setupEventListeners() {
@@ -248,6 +284,41 @@ class MainFragment : BrowseFragment() {
         activity.startService(recommendationIntent)
     }
 
+    @Throws(IOException::class)
+    private fun downloadUrl(myurl: String): String {
+        var `is`: InputStream? = null
+        // Only display the first 1000 characters of the retrieved
+        // web page content.
+        val len = 1000
+        try {
+            val url = URL(myurl)
+            val conn = url.openConnection() as HttpURLConnection
+            conn.setReadTimeout(10000 /* milliseconds */)
+            //set back to 15000, 10000
+            conn.setConnectTimeout(15000 /* milliseconds */)
+            conn.setRequestMethod("GET")
+            conn.setDoInput(true)
+            // Starts the query
+            conn.connect()
+            val response = conn.getResponseCode()
+            `is` = conn.getInputStream()
+
+            val byteArrayOutputStream = ByteArrayOutputStream()
+
+            var i = `is`!!.read()
+            while (i != -1) {
+                byteArrayOutputStream.write(i)
+                i = `is`!!.read()
+            }
+            Log.d(BrowseFragment.TAG, "Download finished; parse")
+            return byteArrayOutputStream.toString("UTF-8")
+        } finally {
+            if (`is` != null) {
+                `is`!!.close()
+            }
+        }
+    }
+
     private inner class UpdateBackgroundTask : TimerTask() {
 
         override fun run() {
@@ -264,9 +335,12 @@ class MainFragment : BrowseFragment() {
                                    rowViewHolder: RowPresenter.ViewHolder, row: Row) {
 
             val card = item as Card
-            if (card.type == Card.TYPE_ARTICLE) {
-
+            when (card.type) {
+                Card.TYPE_ARTICLE -> {
+                    // Open the browser
+                }
             }
+            // TODO Add clicker
         }
     }
 
@@ -286,3 +360,7 @@ class MainFragment : BrowseFragment() {
         private val BACKGROUND_UPDATE_DELAY = 300
     }
 }
+
+operator fun JSONArray.iterator(): Iterator<JSONObject>
+        = (0 until length()).asSequence().map { get(it) as JSONObject }.iterator()
+

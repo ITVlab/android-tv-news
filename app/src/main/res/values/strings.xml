@@ -100,4 +100,7 @@
     <string name="header_videos">Videos</string>
     <string name="header_podcasts">Podcasts</string>
     <string name="header_itvlab">ITV Lab</string>
+
+    <string name="yt_api_key">AIzaSyASAFgRpzMaTK8ANQ0vTUcHNB87lUbm6d0</string>
+    <string name="yt_uploads_pl">UU1R_fgIcP7DJoPgR0nAUQ1w</string>
 </resources>

@@ -61,14 +61,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".mobile.MobileWelcomeActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
         <meta-data android:name="android.app.default_searchable"
             android:value=".ui.VideoDetailsActivity" />
         <activity
@@ -104,14 +96,6 @@
             android:theme="@style/Theme.Example.Leanback.GuidedStep" />
 
         <!-- Provides search suggestions for keywords against video metadata. -->
-        <provider
-            android:name=".data.VideoProvider"
-            android:authorities="${packageName}"
-            android:exported="true">
-            <path-permission
-                android:pathPrefix="/search"
-                android:readPermission="android.permission.GLOBAL_SEARCH" />
-        </provider>
 
         <receiver
             android:name=".recommendation.RecommendationReceiver"
@@ -122,9 +106,6 @@
             </intent-filter>
         </receiver>
 
-        <service
-            android:name=".data.FetchVideoService"
-            android:exported="false" />
         <service
             android:name=".recommendation.UpdateRecommendationsService"
             android:enabled="true" />

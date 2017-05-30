@@ -2,9 +2,6 @@ package com.example.android.tvleanback;
 
 import android.content.ContentValues;
 
-import com.example.android.tvleanback.data.VideoContract;
-import com.example.android.tvleanback.data.VideoDbBuilder;
-
 import junit.framework.Assert;
 
 import org.json.JSONArray;
