@@ -17,26 +17,17 @@
 package com.example.android.tvleanback.recommendation;
 
 import android.app.IntentService;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.support.app.recommendation.ContentRecommendation;
 import android.util.Log;
 
-import com.bumptech.glide.Glide;
-import com.example.android.tvleanback.BuildConfig;
 import com.example.android.tvleanback.R;
 import com.example.android.tvleanback.model.Video;
-import com.example.android.tvleanback.model.VideoCursorMapper;
-import com.example.android.tvleanback.ui.VideoDetailsActivity;
-
-import java.util.concurrent.ExecutionException;
 
 /*
  * This class builds up to MAX_RECOMMENDATIONS of ContentRecommendations and defines what happens
@@ -45,7 +36,6 @@ import java.util.concurrent.ExecutionException;
 public class UpdateRecommendationsService extends IntentService {
     private static final String TAG = "RecommendationService";
     private static final int MAX_RECOMMENDATIONS = 3;
-    private static final VideoCursorMapper mVideoCursorMapper = new VideoCursorMapper();
 
     private NotificationManager mNotifManager;
 

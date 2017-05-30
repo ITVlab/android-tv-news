@@ -63,37 +63,14 @@
 
         <meta-data android:name="android.app.default_searchable"
             android:value=".ui.VideoDetailsActivity" />
-        <activity
-            android:name=".ui.VideoDetailsActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Leanback.Details">
 
-            <!-- Receives the search request. -->
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-                <!-- No category needed, because the Intent will specify this class component -->
-            </intent-filter>
-
-            <!-- Points to searchable meta data. -->
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
-        </activity>
         <activity
             android:name=".ui.PlaybackOverlayActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|layoutDirection"
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true" />
-        <activity
-            android:name=".ui.VerticalGridActivity"
-            android:exported="true"
-            android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/Theme.Leanback.VerticalGrid" />
         <activity android:name=".ui.SearchActivity" />
-        <activity
-            android:name=".ui.GuidedStepActivity"
-            android:theme="@style/Theme.Example.Leanback.GuidedStep" />
 
         <!-- Provides search suggestions for keywords against video metadata. -->
 
@@ -110,17 +87,10 @@
             android:name=".recommendation.UpdateRecommendationsService"
             android:enabled="true" />
 
-        <activity android:name=".ui.OnboardingActivity"
-            android:enabled="true"
-            android:exported="true"
-            android:theme="@style/Theme.Leanback.Onboarding" />
         <activity android:name=".ui.SettingsActivity"
             android:exported="true"
             android:theme="@style/LeanbackPreferences"
             />
-        <activity
-            android:name=".ui.AuthenticationActivity"
-            android:theme="@style/Theme.Example.Leanback.GuidedStep" />
         <activity
             android:name=".ui.ArticleViewActivity"
             android:theme="@style/Theme.AppCompat"

@@ -18,21 +18,14 @@ package com.example.android.tvleanback.ui;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.LoaderManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.CursorObjectAdapter;
-import android.support.v17.leanback.widget.HeaderItem;
-import android.support.v17.leanback.widget.ImageCardView;
-import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.ObjectAdapter;
 import android.support.v17.leanback.widget.OnItemViewClickedListener;
@@ -40,7 +33,6 @@ import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v17.leanback.widget.SpeechRecognitionCallback;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -48,15 +40,13 @@ import android.widget.Toast;
 import com.example.android.tvleanback.BuildConfig;
 import com.example.android.tvleanback.R;
 import com.example.android.tvleanback.model.Video;
-import com.example.android.tvleanback.model.VideoCursorMapper;
 import com.example.android.tvleanback.presenter.CardPresenter;
 
 /*
  * This class demonstrates how to do in-app search
  */
 public class SearchFragment extends android.support.v17.leanback.app.SearchFragment
-        implements android.support.v17.leanback.app.SearchFragment.SearchResultProvider,
-        LoaderManager.LoaderCallbacks<Cursor> {
+        implements android.support.v17.leanback.app.SearchFragment.SearchResultProvider {
     private static final String TAG = "SearchFragment";
     private static final boolean DEBUG = BuildConfig.DEBUG;
     private static final boolean FINISH_ON_RECOGNIZER_CANCELED = true;
@@ -76,7 +66,6 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
         super.onCreate(savedInstanceState);
 
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
-        mVideoCursorAdapter.setMapper(new VideoCursorMapper());
 
         setSearchResultProvider(this);
         setOnItemViewClickedListener(new ItemViewClickedListener());
@@ -166,48 +155,11 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
     private void loadQuery(String query) {
         if (!TextUtils.isEmpty(query) && !query.equals("nil")) {
             mQuery = query;
-            getLoaderManager().initLoader(mSearchLoaderId++, null, this);
         }
     }
 
     public void focusOnSearch() {
         getView().findViewById(R.id.lb_search_bar).requestFocus();
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String query = mQuery;
-        return new CursorLoader(
-                getActivity(),
-                VideoContract.VideoEntry.CONTENT_URI,
-                null, // Return all fields.
-                VideoContract.VideoEntry.COLUMN_NAME + " LIKE ? OR " +
-                        VideoContract.VideoEntry.COLUMN_DESC + " LIKE ?",
-                new String[]{"%" + query + "%", "%" + query + "%"},
-                null // Default sort order
-        );
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        int titleRes;
-        if (cursor != null && cursor.moveToFirst()) {
-            mResultsFound = true;
-            titleRes = R.string.search_results;
-        } else {
-            mResultsFound = false;
-            titleRes = R.string.no_search_results;
-        }
-        mVideoCursorAdapter.changeCursor(cursor);
-        HeaderItem header = new HeaderItem(getString(titleRes, mQuery));
-        mRowsAdapter.clear();
-        ListRow row = new ListRow(header, mVideoCursorAdapter);
-        mRowsAdapter.add(row);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mVideoCursorAdapter.changeCursor(null);
     }
 
     private final class ItemViewClickedListener implements OnItemViewClickedListener {
@@ -216,15 +168,6 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
                 RowPresenter.ViewHolder rowViewHolder, Row row) {
 
             if (item instanceof Video) {
-                Video video = (Video) item;
-                Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
-                intent.putExtra(VideoDetailsActivity.VIDEO, video);
-
-                Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        getActivity(),
-                        ((ImageCardView) itemViewHolder.view).getMainImageView(),
-                        VideoDetailsActivity.SHARED_ELEMENT_NAME).toBundle();
-                getActivity().startActivity(intent, bundle);
             } else {
                 Toast.makeText(getActivity(), ((String) item), Toast.LENGTH_SHORT).show();
             }

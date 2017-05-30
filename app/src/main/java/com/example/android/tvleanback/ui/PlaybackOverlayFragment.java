@@ -24,14 +24,10 @@ import com.google.android.exoplayer.util.Util;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.LoaderManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
@@ -45,7 +41,6 @@ import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.ClassPresenterSelector;
 import android.support.v17.leanback.widget.CursorObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
-import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnItemViewClickedListener;
@@ -54,7 +49,6 @@ import android.support.v17.leanback.widget.PlaybackControlsRowPresenter;
 import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -71,7 +65,6 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.android.tvleanback.R;
 import com.example.android.tvleanback.Utils;
 import com.example.android.tvleanback.model.Video;
-import com.example.android.tvleanback.model.VideoCursorMapper;
 import com.example.android.tvleanback.player.ExtractorRendererBuilder;
 import com.example.android.tvleanback.player.VideoPlayer;
 import com.example.android.tvleanback.presenter.CardPresenter;
@@ -100,8 +93,6 @@ public class PlaybackOverlayFragment
         mAutoPlayExtras.putBoolean(AUTO_PLAY, true);
     }
 
-    private final VideoCursorMapper mVideoCursorMapper = new VideoCursorMapper();
-    private int mSpecificVideoLoaderId = 3;
     private int mQueueIndex = -1;
     private Video mSelectedVideo; // Video is the currently playing Video and its metadata.
     private ArrayObjectAdapter mRowsAdapter;
@@ -176,10 +167,6 @@ public class PlaybackOverlayFragment
         super.onStart();
 
         // Set up UI
-        Video video = getActivity().getIntent().getParcelableExtra(VideoDetailsActivity.VIDEO);
-        if (!updateSelectedVideo(video)) {
-            return;
-        }
 
         mGlue = new PlaybackControlHelper(getActivity(), this, mSelectedVideo);
         PlaybackControlsRowPresenter controlsRowPresenter = mGlue.createControlsRowAndPresenter();
@@ -204,11 +191,6 @@ public class PlaybackOverlayFragment
     @Override
     public void onResume() {
         super.onResume();
-        Video video = getActivity().getIntent().getParcelableExtra(VideoDetailsActivity.VIDEO);
-        if (!updateSelectedVideo(video)) {
-            return;
-        }
-
         startPlaying();
     }
 
@@ -229,10 +211,7 @@ public class PlaybackOverlayFragment
 
     private boolean updateSelectedVideo(Video video) {
         Intent intent = new Intent(getActivity().getIntent());
-        intent.putExtra(VideoDetailsActivity.VIDEO, video);
-        if (mSelectedVideo != null && mSelectedVideo.equals(video)) {
-            return false;
-        }
+
         mSelectedVideo = video;
 
         PendingIntent pi = PendingIntent.getActivity(
@@ -403,7 +382,6 @@ public class PlaybackOverlayFragment
      */
     private void addOtherRows() {
         mVideoCursorAdapter = new CursorObjectAdapter(new CardPresenter());
-        mVideoCursorAdapter.setMapper(new VideoCursorMapper());
 
         Bundle args = new Bundle();
 
@@ -599,13 +577,7 @@ public class PlaybackOverlayFragment
             if (item instanceof Video) {
                 Video video = (Video) item;
                 Intent intent = new Intent(getActivity(), PlaybackOverlayActivity.class);
-                intent.putExtra(VideoDetailsActivity.VIDEO, video);
-
-                Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        getActivity(),
-                        ((ImageCardView) itemViewHolder.view).getMainImageView(),
-                        VideoDetailsActivity.SHARED_ELEMENT_NAME).toBundle();
-                getActivity().startActivity(intent, bundle);
+                getActivity().startActivity(intent);
             }
         }
     }

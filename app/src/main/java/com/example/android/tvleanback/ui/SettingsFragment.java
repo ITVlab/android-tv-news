@@ -66,7 +66,7 @@ public class SettingsFragment extends LeanbackSettingsFragment
         return fragment;
     }
 
-    private class PrefFragment extends LeanbackPreferenceFragment {
+    public static class PrefFragment extends LeanbackPreferenceFragment {
 
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
@@ -77,15 +77,6 @@ public class SettingsFragment extends LeanbackSettingsFragment
             } else {
                 setPreferencesFromResource(prefResId, root);
             }
-        }
-
-        @Override
-        public boolean onPreferenceTreeClick(Preference preference) {
-            if (preference.getKey().equals(getString(R.string.pref_key_login))) {
-                // Open an AuthenticationActivity
-                startActivity(new Intent(getActivity(), AuthenticationActivity.class));
-            }
-            return super.onPreferenceTreeClick(preference);
         }
     }
 }

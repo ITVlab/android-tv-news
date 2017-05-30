@@ -364,7 +364,6 @@ class MainFragment : BrowseFragment() {
                             .show()
                 }
             }
-            // TODO Add clicker
         }
     }
 
