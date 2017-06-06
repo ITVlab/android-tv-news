@@ -419,7 +419,7 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
             ExoPlayer.STATE_READY ->
                 // Duration is set here.
                 if (!mIsMetadataSet) {
-                    updateMetadata(mSelectedVideo)
+                    updateMetadata(mSelectedVideo!!)
                     mIsMetadataSet = true
                 }
             else -> {
@@ -506,9 +506,9 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
                 .load(Uri.parse(video.cardImageUrl))
                 .asBitmap()
                 .centerCrop()
-                .into<>(object : SimpleTarget<Bitmap>(cardWidth, cardHeight) {
-                    override fun onResourceReady(bitmap: Bitmap, anim: GlideAnimation<*>) {
-                        metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, bitmap)
+                .into(object : SimpleTarget<Bitmap>(cardWidth, cardHeight) {
+                    override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
+                        metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, resource)
                         mSession!!.setMetadata(metadataBuilder.build())
                     }
                 })
@@ -527,7 +527,7 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
 
     private fun startPlaying() {
         // Prepare the player and start playing the selected video
-        playVideo(mSelectedVideo, mAutoPlayExtras)
+        playVideo(mSelectedVideo!!, mAutoPlayExtras)
 
         // Start loading videos for the queue
         val args = Bundle()
@@ -624,7 +624,7 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
 
     companion object {
         private val TAG = "PlaybackOverlayFragment"
-        private val BACKGROUND_TYPE = PlaybackOverlayFragment.BG_LIGHT
+        private val BACKGROUND_TYPE = R.color.default_background
         private val AUTO_PLAY = "auto_play"
         private val mAutoPlayExtras = Bundle()
 
