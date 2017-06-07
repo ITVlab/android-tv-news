@@ -76,18 +76,28 @@ public class CardPresenter extends Presenter {
         cardView.setTitleText(card.getPrimaryText());
         cardView.setContentText(card.getSecondaryText());
 
-        if (card.getImageUrl() != null) {
-            // Set card size from dimension resources.
-            Resources res = cardView.getResources();
-            int width = res.getDimensionPixelSize(R.dimen.card_width);
-            int height = res.getDimensionPixelSize(R.dimen.card_height);
-            cardView.setMainImageDimensions(width, height);
-
-            Glide.with(cardView.getContext())
-                    .load(card.getImageUrl())
-                    .error(mDefaultCardImage)
-                    .into(cardView.getMainImageView());
+        String cardImg = card.getImageUrl();
+        if (card.getImageUrl() == null) {
+            if (card.getType() == Card.Companion.getTYPE_ARTICLE()) {
+                cardImg = "https://i0.wp.com/androidtv.news/wp-content/uploads/2017/06/Facebook1.png?w=329&ssl=1";
+            } else if (card.getType() == Card.Companion.getTYPE_APP_ABOUT()) {
+                cardImg = "https://i0.wp.com/androidtv.news/wp-content/uploads/2017/06/Facebook1.png?w=329&ssl=1";
+            } else if (card.getType() == Card.Companion.getTYPE_APP()) {
+                cardImg = "https://i0.wp.com/androidtv.news/wp-content/uploads/2017/06/Facebook1.png?w=329&ssl=1";
+            }
         }
+
+        // Set card size from dimension resources.
+        Resources res = cardView.getResources();
+        int width = res.getDimensionPixelSize(R.dimen.card_width);
+        int height = res.getDimensionPixelSize(R.dimen.card_height);
+        cardView.setMainImageDimensions(width, height);
+
+        Glide.with(cardView.getContext())
+                .load(cardImg)
+                .error(mDefaultCardImage)
+                .into(cardView.getMainImageView());
+
     }
 
     @Override

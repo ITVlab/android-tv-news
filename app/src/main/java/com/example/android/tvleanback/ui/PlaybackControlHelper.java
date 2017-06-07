@@ -226,7 +226,7 @@ class PlaybackControlHelper extends PlaybackControlGlue {
     protected void onMetadataChanged() {
         MediaMetadata metadata = mFragment.getActivity().getMediaController().getMetadata();
         if (metadata != null) {
-            mVideo = new Video.VideoBuilder().buildFromMediaDesc(metadata.getDescription());
+            mVideo = new Video.Builder().buildFromMediaDesc(metadata.getDescription());
             int duration = (int) metadata.getLong(MediaMetadata.METADATA_KEY_DURATION);
             getControlsRow().setTotalTime(duration);
             mMediaArt = new BitmapDrawable(mFragment.getResources(),
@@ -286,7 +286,6 @@ class PlaybackControlHelper extends PlaybackControlGlue {
         @Override
         public void onPlaybackStateChanged(@NonNull PlaybackState state) {
             // Update your UI to reflect the new state. Do not change media playback here.
-            if (DEBUG) Log.d(TAG, "Playback state changed: " + state.getState());
 
             int nextState = state.getState();
             if (nextState != PlaybackState.STATE_NONE) {
@@ -298,7 +297,6 @@ class PlaybackControlHelper extends PlaybackControlGlue {
         @Override
         public void onMetadataChanged(MediaMetadata metadata) {
             PlaybackControlHelper.this.onMetadataChanged(); // Update metadata on controls.
-            mFragment.updatePlaybackRow();
         }
     }
 }

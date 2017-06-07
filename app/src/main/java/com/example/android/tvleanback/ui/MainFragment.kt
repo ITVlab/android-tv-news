@@ -78,17 +78,6 @@ class MainFragment : BrowseFragment() {
     private var mBackgroundURI: Uri? = null
     private var mBackgroundManager: BackgroundManager? = null
 
-    // Maps a Loader Id to its CursorObjectAdapter.
-    private var mVideoCursorAdapters: Map<Int, CursorObjectAdapter>? = null
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        // Create a list to contain all the CursorObjectAdapters.
-        // Each adapter is used to render a specific row of videos in the MainFragment.
-        mVideoCursorAdapters = HashMap<Int, CursorObjectAdapter>()
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         // Final initialization, modifying UI elements.
         super.onActivityCreated(savedInstanceState)
@@ -102,7 +91,7 @@ class MainFragment : BrowseFragment() {
 
         setupUIElements()
         setupEventListeners()
-        prepareEntranceTransition()
+//        prepareEntranceTransition()
 
         adapter = mCategoryRowAdapter
 
@@ -166,10 +155,16 @@ class MainFragment : BrowseFragment() {
             val feed = "https://androidtv.news/feed/"
             // Get more posts: https://androidtv.news/feed/?paged=2
             val rssFeed = rssReader.load(feed)
-            rssFeed.items.forEach(Consumer {
+            rssFeed.items.forEach({
+                Log.d(TAG, it.toString())
+                var img = String()
+                if (it.content.indexOf(".png") > -1) {
+                    img = it.content.substring(it.content.indexOf("src=") + 5, it.content.indexOf(".png") + 4)
+                }
+                Log.d(TAG, img + "<")
                 addCard(listRowAdapter, Card(type = Card.TYPE_ARTICLE,
-                        imageUrl = it.thumbnails[0].url.toString(),
-                        bgImageUrl = it.thumbnails[0].url.toString(),
+                        imageUrl = img,
+                        bgImageUrl = img,
                         primaryText = it.title,
                         secondaryText = it.pubDate.toString(),
                         extra = it.content))
@@ -222,7 +217,7 @@ class MainFragment : BrowseFragment() {
                         primaryText = podcast.getString("title"),
                         secondaryText = podcast.getString("created_at"),
                         imageUrl = podcast.getString("artwork_url"),
-                        bgImageUrl = podcast.getString("waveform_url"),
+//                        bgImageUrl = podcast.getString("waveform_url"),
                         extra = "${podcast.getString("stream_url")}?client_id=$SOUNDCLOUD_API_KEY"))
             }
         }).start()
@@ -382,8 +377,11 @@ class MainFragment : BrowseFragment() {
     }
 
     private inner class ItemViewSelectedListener : OnItemViewSelectedListener {
-        override fun onItemSelected(itemViewHolder: Presenter.ViewHolder, item: Any,
-                                    rowViewHolder: RowPresenter.ViewHolder, row: Row) {
+        override fun onItemSelected(itemViewHolder: Presenter.ViewHolder?, item: Any?,
+                                    rowViewHolder: RowPresenter.ViewHolder?, row: Row?) {
+            if (item == null) {
+                return
+            }
             val card = item as Card
             if (card.bgImageUrl != null) {
                 mBackgroundURI = Uri.parse(card.bgImageUrl)

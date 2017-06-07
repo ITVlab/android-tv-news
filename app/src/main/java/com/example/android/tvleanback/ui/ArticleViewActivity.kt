@@ -19,7 +19,6 @@ class ArticleViewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        actionBar.hide()
         if (intent != null && intent.hasExtra(EXTRA_CONTENT)) {
             val content = intent.getStringExtra(EXTRA_CONTENT)
             setContentView(R.layout.activity_article)
