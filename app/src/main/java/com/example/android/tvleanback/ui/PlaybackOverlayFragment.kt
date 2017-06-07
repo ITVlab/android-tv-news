@@ -173,7 +173,7 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
         val textureView = activity.findViewById(R.id.texture_view) as TextureView
         textureView.surfaceTextureListener = this
 
-        backgroundType = BACKGROUND_TYPE
+//        backgroundType = BACKGROUND_TYPE
 
         // Set up listener.
         onItemViewClickedListener = ItemViewClickedListener()

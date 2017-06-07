@@ -255,10 +255,10 @@ class MainFragment : BrowseFragment() {
     }
 
     private fun setupEventListeners() {
-        setOnSearchClickedListener {
+        /*setOnSearchClickedListener {
             val intent = Intent(activity, SearchActivity::class.java)
             startActivity(intent)
-        }
+        }*/
 
         onItemViewClickedListener = ItemViewClickedListener()
         onItemViewSelectedListener = ItemViewSelectedListener()

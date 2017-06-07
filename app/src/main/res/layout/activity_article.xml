@@ -9,15 +9,11 @@
         android:background="#333"
         android:layout_gravity="center_horizontal"
         android:layout_height="match_parent">
-        <LinearLayout
+        <WebView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <WebView
-                android:layout_width="match_parent"
-                android:id="@+id/content"
-                android:textColor="#ddd"
-                android:text="There is some news."
-                android:layout_height="match_parent" />
-        </LinearLayout>
+            android:id="@+id/content"
+            android:textColor="#ddd"
+            android:text="There is some news."
+            android:layout_height="wrap_content" />
     </ScrollView>
 </LinearLayout>

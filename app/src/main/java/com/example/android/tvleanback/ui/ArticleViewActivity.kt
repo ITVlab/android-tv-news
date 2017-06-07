@@ -3,6 +3,7 @@ package com.example.android.tvleanback.ui
 import android.app.Activity
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.webkit.WebView
 import android.widget.TextView
 import com.example.android.tvleanback.R
@@ -13,18 +14,29 @@ import com.example.android.tvleanback.R
 
 class ArticleViewActivity : AppCompatActivity() {
     companion object {
+        val TAG = ArticleViewActivity::class.java.simpleName
         val EXTRA_CONTENT = "content"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (supportActionBar != null) {
+            supportActionBar!!.hide()
+        }
+
+        Log.d(TAG, "Opening article.")
+
         if (intent != null && intent.hasExtra(EXTRA_CONTENT)) {
-            val content = intent.getStringExtra(EXTRA_CONTENT)
+            val content = "<html><body>" + intent.getStringExtra(EXTRA_CONTENT) + "</body></head>"
+            Log.d(TAG, "Has content: " + content.substring(0, 80))
             setContentView(R.layout.activity_article)
-            (findViewById(R.id.content) as WebView).loadData(content, "text/html; charset=utf-8", "UTF-8")
+            val wv = findViewById(R.id.content) as WebView
+            wv.settings.javaScriptEnabled = true
+            wv.loadDataWithBaseURL("http://androidtv.news", content, "text/html", "UTF-8", null)
         } else {
             // No content to show
+            Log.d(TAG, "No content or intent")
             finish()
         }
     }
