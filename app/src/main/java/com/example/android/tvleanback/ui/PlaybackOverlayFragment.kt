@@ -115,7 +115,7 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        createMediaSession()
+//        createMediaSession()
     }
 
     override fun onStop() {
@@ -137,7 +137,7 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
 
     override fun onStart() {
         super.onStart()
-
+        createMediaSession()
         // Set up UI
 
         mGlue = PlaybackControlHelper(activity, this, mSelectedVideo)
@@ -153,7 +153,7 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
         ps.addClassPresenter(ListRow::class.java, ListRowPresenter())
         mRowsAdapter = ArrayObjectAdapter(ps)
         mRowsAdapter!!.add(controlsRow)
-        addOtherRows()
+//        addOtherRows()
         updatePlaybackRow()
         adapter = mRowsAdapter!!
 
@@ -179,7 +179,7 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
         onItemViewClickedListener = ItemViewClickedListener()
     }
 
-    private fun updateSelectedVideo(video: Video): Boolean {
+    private fun updateSelectedVideo(): Boolean {
         val intent = Intent(activity.intent)
 
         // Reconstruct the video from intent data.
@@ -233,6 +233,7 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
 
     private fun createMediaSession() {
         if (mSession == null) {
+            Log.d(TAG, "Sets media session");
             mSession = MediaSessionCompat(activity, "LeanbackSampleApp")
             mSession!!.setCallback(MediaSessionCallback())
             mSession!!.setFlags(FLAG_HANDLES_MEDIA_BUTTONS or FLAG_HANDLES_TRANSPORT_CONTROLS)
@@ -245,7 +246,8 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
             } catch (e: RemoteException) {
                 e.printStackTrace()
             }
-
+        } else {
+            Log.d(TAG, "Session already exists. Nothing to create.")
         }
     }
 
@@ -312,6 +314,7 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
             return
         }
         if (!mGlue!!.isMediaPlaying) {
+            Log.d(TAG, "PLAY")
             mPlayer!!.playerControl.start()
             playbackState = PlaybackState.STATE_PLAYING
         }
@@ -325,6 +328,7 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
             return
         }
         if (mGlue!!.isMediaPlaying) {
+            Log.d(TAG, "PAUSE")
             mPlayer!!.playerControl.pause()
             playbackState = PlaybackState.STATE_PAUSED
         }
@@ -367,6 +371,7 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
     private val rendererBuilder: VideoPlayer.RendererBuilder
         get() {
             val userAgent = Util.getUserAgent(activity, "ExoVideoPlayer")
+            Log.d(TAG, "Play " + mSelectedVideo!!.videoUrl)
             val contentUri = Uri.parse(mSelectedVideo!!.videoUrl)
             val contentType = Util.inferContentType(contentUri.lastPathSegment)
 
@@ -488,6 +493,7 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
         metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, video.id.toString() + "")
         metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, video.title)
         metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, video.studio)
+        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, video.cardImageUrl)
         metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION,
                 video.description)
 
@@ -514,8 +520,8 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
                 })
     }
 
-    private fun playVideo(video: Video, extras: Bundle) {
-        updateSelectedVideo(video)
+    private fun playVideo(extras: Bundle) {
+        updateSelectedVideo()
         preparePlayer()
         playbackState = PlaybackState.STATE_PAUSED
         if (extras.getBoolean(AUTO_PLAY)) {
@@ -527,10 +533,8 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
 
     private fun startPlaying() {
         // Prepare the player and start playing the selected video
-        playVideo(mSelectedVideo!!, mAutoPlayExtras)
-
-        // Start loading videos for the queue
-        val args = Bundle()
+        updateSelectedVideo()
+        playVideo(mAutoPlayExtras)
     }
 
     private inner class ItemViewClickedListener : OnItemViewClickedListener {

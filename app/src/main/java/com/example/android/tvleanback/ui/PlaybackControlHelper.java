@@ -51,13 +51,16 @@ class PlaybackControlHelper extends PlaybackControlGlue {
         mFragment = fragment;
         mVideo = video;
         mMediaController = mFragment.getActivity().getMediaController();
+        if (mMediaController == null) {
+            throw new NullPointerException("Media controller never set");
+        }
         mTransportControls = mMediaController.getTransportControls();
 
-        mThumbsUpAction = new PlaybackControlsRow.ThumbsUpAction(context);
+/*        mThumbsUpAction = new PlaybackControlsRow.ThumbsUpAction(context);
         mThumbsUpAction.setIndex(PlaybackControlsRow.ThumbsUpAction.OUTLINE);
         mThumbsDownAction = new PlaybackControlsRow.ThumbsDownAction(context);
         mThumbsDownAction.setIndex(PlaybackControlsRow.ThumbsDownAction.OUTLINE);
-        mRepeatAction = new PlaybackControlsRow.RepeatAction(context);
+        mRepeatAction = new PlaybackControlsRow.RepeatAction(context);*/
         mPipAction = new PlaybackControlsRow.PictureInPictureAction(context);
     }
 
@@ -78,9 +81,9 @@ class PlaybackControlHelper extends PlaybackControlGlue {
         mRewindAction = (PlaybackControlsRow.RewindAction) getPrimaryActionsAdapter()
                 .lookup(ACTION_REWIND);
 
-        adapter.add(mThumbsDownAction);
-        adapter.add(mRepeatAction);
-        adapter.add(mThumbsUpAction);
+//        adapter.add(mThumbsDownAction);
+//        adapter.add(mRepeatAction);
+//        adapter.add(mThumbsUpAction);
         if (PlaybackOverlayActivity.Companion.supportsPictureInPicture(getContext())) {
             adapter.add(mPipAction);
         }
@@ -180,8 +183,8 @@ class PlaybackControlHelper extends PlaybackControlGlue {
 
     @Override
     public long getSupportedActions() {
-        return ACTION_PLAY_PAUSE | ACTION_FAST_FORWARD | ACTION_REWIND | ACTION_SKIP_TO_PREVIOUS |
-                ACTION_SKIP_TO_NEXT;
+        return ACTION_PLAY_PAUSE | ACTION_FAST_FORWARD | ACTION_REWIND /* | ACTION_SKIP_TO_PREVIOUS |
+                ACTION_SKIP_TO_NEXT*/;
     }
 
     @Override
