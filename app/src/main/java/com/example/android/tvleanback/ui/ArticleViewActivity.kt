@@ -1,12 +1,13 @@
 package com.example.android.tvleanback.ui
 
-import android.app.Activity
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.webkit.WebView
-import android.widget.TextView
 import com.example.android.tvleanback.R
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+
 
 /**
  * Created by Nick on 5/29/2017.
@@ -37,6 +38,10 @@ class ArticleViewActivity : AppCompatActivity() {
             val wv = findViewById(R.id.content) as WebView
             wv.settings.javaScriptEnabled = true
             wv.loadDataWithBaseURL("http://androidtv.news", content, "text/html", "UTF-8", null)
+
+            val adView = findViewById(R.id.adView) as AdView
+            val adRequest = AdRequest.Builder().build()
+            adView.loadAd(adRequest)
         } else {
             // No content to show
             Log.d(TAG, "No content or intent")

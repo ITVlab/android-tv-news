@@ -5,7 +5,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion '25.0.0'
     defaultConfig {
-        applicationId "com.example.android.tvleanback"
+        applicationId "news.androidtv.curated"
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 1
@@ -39,6 +39,9 @@ dependencies {
     compile 'com.google.android.exoplayer:exoplayer:r1.5.8'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
+    compile "com.google.firebase:firebase-core:$rootProject.ext.firebaseLib"
+    compile "com.google.firebase:firebase-ads:$rootProject.ext.firebaseLib"
+
     // Custom 3P libraries
 //    compile 'com.github.ahorn:android-rss:v1.0-rc1'
 }
@@ -49,3 +52,5 @@ repositories {
 
 buildscript {
 }
+
+apply plugin: 'com.google.gms.google-services'

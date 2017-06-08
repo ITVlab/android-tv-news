@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:background="#111"
     android:layout_height="match_parent">
     <WebView
         android:layout_width="600dp"
-        android:layout_gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
         android:id="@+id/content"
         android:textColor="#ddd"
         android:text="There is some news."
         android:layout_height="match_parent" />
-</LinearLayout>
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="320dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-1944443832257008/6593431971">
+        </com.google.android.gms.ads.AdView>
+</RelativeLayout>
