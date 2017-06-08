@@ -28,7 +28,10 @@ class ArticleViewActivity : AppCompatActivity() {
         Log.d(TAG, "Opening article.")
 
         if (intent != null && intent.hasExtra(EXTRA_CONTENT)) {
-            val content = "<html><body>" + intent.getStringExtra(EXTRA_CONTENT) + "</body></head>"
+            var content = "<html><body style='background-color:#555; color: #ddd'><style>.youtube-player { width: 50% !important; height: inherit !important; text-align:center;}</style>" + intent.getStringExtra(EXTRA_CONTENT) + "</body></head>"
+            // Replace images to use new width <img width="xxx -> <img width="100%
+            val regex = Regex("<img width=\"\\d+\" height=\"\\d+\"")
+            content = content.replace(regex, "<img width='100%'")
             Log.d(TAG, "Has content: " + content.substring(0, 80))
             setContentView(R.layout.activity_article)
             val wv = findViewById(R.id.content) as WebView

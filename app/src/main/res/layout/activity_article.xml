@@ -3,17 +3,11 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:background="#111"
     android:layout_height="match_parent">
-
-    <ScrollView
-        android:layout_width="480dp"
-        android:background="#333"
+    <WebView
+        android:layout_width="600dp"
         android:layout_gravity="center_horizontal"
-        android:layout_height="match_parent">
-        <WebView
-            android:layout_width="match_parent"
-            android:id="@+id/content"
-            android:textColor="#ddd"
-            android:text="There is some news."
-            android:layout_height="wrap_content" />
-    </ScrollView>
+        android:id="@+id/content"
+        android:textColor="#ddd"
+        android:text="There is some news."
+        android:layout_height="match_parent" />
 </LinearLayout>
