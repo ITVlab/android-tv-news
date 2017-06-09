@@ -26,6 +26,8 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 
 import com.example.android.tvleanback.R
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
 
 /**
  * PlaybackOverlayActivity for video playback that loads PlaybackOverlayFragment and handles the

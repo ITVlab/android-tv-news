@@ -52,6 +52,9 @@ import com.example.android.tvleanback.model.Card
 import com.example.android.tvleanback.presenter.CardPresenter
 import com.example.android.tvleanback.presenter.IconHeaderItemPresenter
 import com.example.android.tvleanback.recommendation.UpdateRecommendationsService
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
 import org.json.JSONArray
 import org.json.JSONObject
 import org.mcsoxford.rss.RSSReader
@@ -188,10 +191,14 @@ class MainFragment : BrowseFragment() {
             val response = downloadUrl(url)
             val items = JSONObject(response).getJSONArray("items")
             for (video in items) {
+                var image = video.getJSONObject("snippet").getJSONObject("thumbnails").getJSONObject("high").getString("url")
+                if (video.getJSONObject("snippet").getJSONObject("thumbnails").has("maxres")) {
+                    image = video.getJSONObject("snippet").getJSONObject("thumbnails").getJSONObject("maxres").getString("url")
+                }
                 addCard(listRowAdapter, Card(type = Card.TYPE_VIDEO,
                         primaryText = video.getJSONObject("snippet").getString("title"),
-                        bgImageUrl = video.getJSONObject("snippet").getJSONObject("thumbnails").getJSONObject("maxres").getString("url"),
-                        imageUrl = video.getJSONObject("snippet").getJSONObject("thumbnails").getJSONObject("maxres").getString("url"),
+                        bgImageUrl = image,
+                        imageUrl = image,
                         secondaryText = "New Video",
                         extra = video.getJSONObject("snippet").getJSONObject("resourceId").getString("videoId")))
             }
@@ -359,7 +366,22 @@ class MainFragment : BrowseFragment() {
                     podcastIntent.putExtra(PlaybackOverlayActivity.EXTRA_MEDIA_URL, card.extra)
                     podcastIntent.putExtra(PlaybackOverlayActivity.EXTRA_MEDIA_TITLE, card.primaryText)
                     podcastIntent.putExtra(PlaybackOverlayActivity.EXTRA_MEDIA_IMG, card.imageUrl)
-                    startActivity(podcastIntent)
+                    // Show interstitial ad
+                    val interstitial_code = "ca-app-pub-1944443832257008/5791023173"
+                    val interstitial = InterstitialAd(activity)
+                    interstitial.adUnitId = interstitial_code
+                    interstitial.loadAd(AdRequest.Builder().build())
+                    interstitial.show()
+                    interstitial.adListener = object : AdListener() {
+                        override fun onAdFailedToLoad(p0: Int) {
+                            super.onAdFailedToLoad(p0)
+                            startActivity(podcastIntent) // Load anyway
+                        }
+
+                        override fun onAdClosed() {
+                            startActivity(podcastIntent)
+                        }
+                    }
                 }
                 Card.TYPE_APP -> {
                     // Open Google Play

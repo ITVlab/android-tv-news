@@ -233,7 +233,7 @@ class PlaybackOverlayFragment : android.support.v17.leanback.app.PlaybackOverlay
 
     private fun createMediaSession() {
         if (mSession == null) {
-            Log.d(TAG, "Sets media session");
+            Log.d(TAG, "Sets media session")
             mSession = MediaSessionCompat(activity, "LeanbackSampleApp")
             mSession!!.setCallback(MediaSessionCallback())
             mSession!!.setFlags(FLAG_HANDLES_MEDIA_BUTTONS or FLAG_HANDLES_TRANSPORT_CONTROLS)

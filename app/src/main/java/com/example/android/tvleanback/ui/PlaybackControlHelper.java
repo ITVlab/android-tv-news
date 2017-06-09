@@ -252,6 +252,10 @@ class PlaybackControlHelper extends PlaybackControlGlue {
             mTransportControls.rewind();
         } else if (action.getId() == mPipAction.getId()) {
             ((Activity) getContext()).enterPictureInPictureMode();
+        } else if (action.toString().equals("Play")) {
+            mTransportControls.play();
+        } else if (action.toString().equals("Pause")) {
+            mTransportControls.pause();
         } else {
             Log.d(TAG, action.toString());
             super.onActionClicked(action);
