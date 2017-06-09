@@ -26,7 +26,6 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.example.android.tvleanback.R;
 import com.example.android.tvleanback.model.Card;
-import com.example.android.tvleanback.model.Video;
 
 /*
  * A CardPresenter is used to generate Views and bind Objects to them on demand.
@@ -43,7 +42,7 @@ public class CardPresenter extends Presenter {
             ContextCompat.getColor(parent.getContext(), R.color.default_background);
         mSelectedBackgroundColor =
                 ContextCompat.getColor(parent.getContext(), R.color.selected_background);
-        mDefaultCardImage = parent.getResources().getDrawable(R.drawable.movie, null);
+        mDefaultCardImage = parent.getResources().getDrawable(R.drawable.android_tv_block, null);
 
         ImageCardView cardView = new ImageCardView(parent.getContext()) {
             @Override

@@ -223,8 +223,8 @@ class MainFragment : BrowseFragment() {
                 addCard(listRowAdapter, Card(type = Card.TYPE_PODCAST,
                         primaryText = podcast.getString("title"),
                         secondaryText = podcast.getString("created_at"),
-                        imageUrl = podcast.getString("artwork_url"),
-//                        bgImageUrl = podcast.getString("waveform_url"),
+                        imageUrl = "https://i1.sndcdn.com/artworks-000222955659-qjewpu-t500x500.jpg",
+                        bgImageUrl = "https://i1.sndcdn.com/artworks-000222955659-qjewpu-t500x500.jpg",
                         extra = "${podcast.getString("stream_url")}?client_id=$SOUNDCLOUD_API_KEY"))
             }
         }).start()
