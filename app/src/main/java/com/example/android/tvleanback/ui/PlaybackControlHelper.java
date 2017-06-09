@@ -253,6 +253,7 @@ class PlaybackControlHelper extends PlaybackControlGlue {
         } else if (action.getId() == mPipAction.getId()) {
             ((Activity) getContext()).enterPictureInPictureMode();
         } else {
+            Log.d(TAG, action.toString());
             super.onActionClicked(action);
         }
     }

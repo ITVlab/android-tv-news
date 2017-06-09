@@ -184,7 +184,7 @@ class MainFragment : BrowseFragment() {
         Thread({
             val yt_api_key = getString(R.string.yt_api_key)
             val yt_playlist = getString(R.string.yt_uploads_pl)
-            val url = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=$yt_playlist&key=$yt_api_key"
+            val url = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=$yt_playlist&key=$yt_api_key"
             val response = downloadUrl(url)
             val items = JSONObject(response).getJSONArray("items")
             for (video in items) {
@@ -232,14 +232,14 @@ class MainFragment : BrowseFragment() {
 
         // Pull all of the apps.
         val cardArray = arrayOf(
-                Card(type = Card.TYPE_APP_ABOUT, primaryText = "About ITV Lab"),
-                Card(type = Card.TYPE_APP, primaryText = "NeoDash", secondaryText = "Custom Screensaver", extra = "news.androidtv.neodash"),
-                Card(type = Card.TYPE_APP, primaryText = "Tv App Repo", secondaryText = "Shortcut Generator", extra = "news.androidtv.tvapprepo.playstore"),
-                Card(type = Card.TYPE_APP, primaryText = "Enterprise Wi-Fi", secondaryText = "WPA2-Enterprise", extra = "com.felkertech.ussenterprise"),
-                Card(type = Card.TYPE_APP, primaryText = "Launch on Boot", secondaryText = "Auto Launch", extra = "news.androidtv.launchonboot"),
-                Card(type = Card.TYPE_APP, primaryText = "Sample Banner Pack", secondaryText = "Custom Banners", extra = "news.androidtv.bannerpack"),
-                Card(type = Card.TYPE_APP, primaryText = "SubChannel", secondaryText = "Subreddits in Live Channels", extra = "news.androidtv.subchannel"),
-                Card(type = Card.TYPE_APP, primaryText = "Family Calendar", secondaryText = "Bigscreen Calendar", extra = "news.androidtv.familycalendar")
+                Card(type = Card.TYPE_APP_ABOUT, primaryText = "About ITV Lab", imageUrl = "https://avatars1.githubusercontent.com/u/22123645?v=3&s=320"),
+                Card(type = Card.TYPE_APP, primaryText = "NeoDash", secondaryText = "Custom Screensaver", extra = "news.androidtv.neodash", imageUrl = "https://raw.githubusercontent.com/ITVlab/neodash/master/promo/banner.png"),
+                Card(type = Card.TYPE_APP, primaryText = "Tv App Repo", secondaryText = "Shortcut Generator", extra = "news.androidtv.tvapprepo.playstore", imageUrl = "https://raw.githubusercontent.com/ITVlab/TvAppRepo/master/promo/graphics/banner.png"),
+                Card(type = Card.TYPE_APP, primaryText = "Enterprise Wi-Fi", secondaryText = "WPA2-Enterprise", extra = "com.felkertech.ussenterprise", imageUrl = "https://raw.githubusercontent.com/ITVlab/Enterprise-Wi-Fi/master/promo/banner720.png"),
+                Card(type = Card.TYPE_APP, primaryText = "Launch on Boot", secondaryText = "Auto Launch", extra = "news.androidtv.launchonboot", imageUrl = "https://raw.githubusercontent.com/ITVlab/Launch-On-Boot/master/promo/banner3.png"),
+                Card(type = Card.TYPE_APP, primaryText = "Sample Banner Pack", secondaryText = "Custom Banners", extra = "news.androidtv.bannerpack", imageUrl = "https://raw.githubusercontent.com/ITVlab/scratch_icon_pack_source/master/promo/banner.png"),
+                Card(type = Card.TYPE_APP, primaryText = "SubChannel", secondaryText = "Subreddits in Live Channels", extra = "news.androidtv.subchannel", imageUrl = "https://raw.githubusercontent.com/ITVlab/SubChannel/master/store/banner.png"),
+                Card(type = Card.TYPE_APP, primaryText = "Family Calendar", secondaryText = "Bigscreen Calendar", extra = "news.androidtv.familycalendar", imageUrl = "https://raw.githubusercontent.com/ITVlab/Family-Calendar/master/promo/banner.png")
         )
         for (c in cardArray) {
             listRowAdapter.add(c)
