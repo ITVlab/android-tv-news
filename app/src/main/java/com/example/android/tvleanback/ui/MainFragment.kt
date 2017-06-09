@@ -391,7 +391,7 @@ class MainFragment : BrowseFragment() {
                 Card.TYPE_APP_ABOUT -> {
                     AlertDialog.Builder(ContextThemeWrapper(activity, R.style.Base_Theme_AppCompat_Dialog))
                             .setTitle("ITV Lab")
-                            .setMessage("Here are some Android Tv apps")
+                            .setMessage("Here are some handy Android Tv apps we've developed. All of these apps are open source on GitHub.")
                             .show()
                 }
             }
