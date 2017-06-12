@@ -124,7 +124,7 @@ class MainFragment : BrowseFragment() {
     }
 
     private fun setupUIElements() {
-        badgeDrawable = activity.resources.getDrawable(R.drawable.videos_by_google_banner, null)
+        badgeDrawable = activity.resources.getDrawable(R.drawable.banner, null)
         title = getString(R.string.browse_title) // Badge, when set, takes precedent over title
         headersState = BrowseFragment.HEADERS_ENABLED
         isHeadersTransitionOnBackEnabled = true
