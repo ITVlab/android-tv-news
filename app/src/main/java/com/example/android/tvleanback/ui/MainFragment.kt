@@ -162,7 +162,11 @@ class MainFragment : BrowseFragment() {
                 Log.d(TAG, it.toString())
                 var img = String()
                 if (it.content.indexOf(".png") > -1) {
-                    img = it.content.substring(it.content.indexOf("src=") + 5, it.content.indexOf(".png") + 4)
+                    try {
+                        img = it.content.substring(it.content.indexOf("src=") + 5, it.content.indexOf(".png") + 4)
+                    } catch (val e : StringOutOfBoundsException) {
+                        // Ignore - go with default
+                    }
                 }
                 Log.d(TAG, img + "<")
                 addCard(listRowAdapter, Card(type = Card.TYPE_ARTICLE,
