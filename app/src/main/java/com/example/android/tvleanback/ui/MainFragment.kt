@@ -164,7 +164,7 @@ class MainFragment : BrowseFragment() {
                 if (it.content.indexOf(".png") > -1) {
                     try {
                         img = it.content.substring(it.content.indexOf("src=") + 5, it.content.indexOf(".png") + 4)
-                    } catch (val e : StringOutOfBoundsException) {
+                    } catch (e : StringIndexOutOfBoundsException) {
                         // Ignore - go with default
                     }
                 }

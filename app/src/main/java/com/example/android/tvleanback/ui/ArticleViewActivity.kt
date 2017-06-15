@@ -33,8 +33,10 @@ class ArticleViewActivity : AppCompatActivity() {
             val footer = "<br><br><br><br><br></body></head>"
             var content = header + intent.getStringExtra(EXTRA_CONTENT) + footer
             // Replace images to use new width <img width="xxx -> <img width="100%
-            val regex = Regex("<img width=\"\\d+\" height=\"\\d+\"")
-            content = content.replace(regex, "<img width='100%'")
+            val img_regex = Regex("<img width=\"\\d+\" height=\"\\d+\"")
+            content = content.replace(img_regex, "<img width='100%'")
+            val link_regex = Regex("href=\".+\"")
+            content = content.replace(link_regex, "")
             Log.d(TAG, "Has content: " + content.substring(0, 80))
             setContentView(R.layout.activity_article)
             val wv = findViewById(R.id.content) as WebView

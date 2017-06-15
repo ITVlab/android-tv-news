@@ -38,7 +38,7 @@
         android:theme="@style/Theme.Leanback">
         <activity
             android:name=".ui.MainActivity"
-            android:icon="@madrawable/banner"
+            android:icon="@drawable/banner"
             android:label="@string/app_name"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.Leanback.Browse">
